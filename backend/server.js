@@ -8,9 +8,36 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Basic route
+// Routes
+const authRoutes = require('./routes/auth');
+const listingsRoutes = require('./routes/listings');
+const bumpsRoutes = require('./routes/bumps');
+const contactsRoutes = require('./routes/contacts');
+const paymentsRoutes = require('./routes/payments');
+const usersRoutes = require('./routes/users');
+
+// Health check
 app.get('/api/health', (req, res) => {
   res.json({ message: 'Gulisani backend is running!' });
+});
+
+// Register routes
+app.use('/api/auth', authRoutes);
+app.use('/api/listings', listingsRoutes);
+app.use('/api/bumps', bumpsRoutes);
+app.use('/api/contacts', contactsRoutes);
+app.use('/api/payments', paymentsRoutes);
+app.use('/api/users', usersRoutes);
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+  console.error('Server error:', err);
+  res.status(500).json({ error: 'Internal server error' });
 });
 
 // Start server
