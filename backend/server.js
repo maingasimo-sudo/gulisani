@@ -21,6 +21,28 @@ app.get('/api/health', (req, res) => {
   res.json({ message: 'Gulisani backend is running!' });
 });
 
+// DB connection test
+app.get('/api/db-test', async (req, res) => {
+  const pool = require('./config/db');
+  try {
+    await pool.query('SELECT 1');
+    res.json({
+      status: 'DB connected OK',
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      database: process.env.DB_NAME,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 'DB connection FAILED',
+      error: err.message,
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      database: process.env.DB_NAME,
+    });
+  }
+});
+
 // Register routes
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingsRoutes);
