@@ -1,7 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-require('dotenv').config();
+try {
+  require('dotenv').config();
+} catch (err) {
+  // .env file not found, using environment variables from Hostinger
+}
 
 const app = express();
 
