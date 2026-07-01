@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -21,29 +22,7 @@ app.get('/api/health', (req, res) => {
   res.json({ message: 'Gulisani backend is running!' });
 });
 
-// DB connection test
-app.get('/api/db-test', async (req, res) => {
-  const pool = require('./config/db');
-  try {
-    await pool.query('SELECT 1');
-    res.json({
-      status: 'DB connected OK',
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      database: process.env.DB_NAME,
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: 'DB connection FAILED',
-      error: err.message,
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      database: process.env.DB_NAME,
-    });
-  }
-});
-
-// Register routes
+// Register API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingsRoutes);
 app.use('/api/bumps', bumpsRoutes);
@@ -51,9 +30,10 @@ app.use('/api/contacts', contactsRoutes);
 app.use('/api/payments', paymentsRoutes);
 app.use('/api/users', usersRoutes);
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ error: 'Route not found' });
+// Serve React frontend in production
+app.use(express.static(path.join(__dirname, '../frontend/build')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
 
 // Error handler
