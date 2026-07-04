@@ -10,7 +10,10 @@ try {
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://localhost:5000', 'https://gulisani.com'],
+  credentials: true
+}));
 app.use(express.json());
 
 // Routes
